@@ -1,0 +1,11 @@
+# server/requirements.txt
+
+# Qt 界面依赖
+PyQt5
+
+# 波形渲染依赖 
+wavedrom
+setuptools
+termcolor
+# 本地 VCD 解析库（开发模式）
+-e MyVcdvcd/

@@ -1,0 +1,102 @@
+== Run
+
+python main.py
+
+== Example
+
+By default, data is parsed at once into a per-signal format that allows for efficient random access, for example:
+
+....
+from vcdvcd import VCDVCD
+
+# Do the parsing.
+vcd = VCDVCD('counter_tb.vcd')
+
+# List all human readable signal names.
+print(vcd.references_to_ids.keys())
+
+# View all signal data.
+print(vcd.data)
+
+# Get a signal by human readable name.
+signal = vcd['counter_tb.top.out[1:0]']
+
+# tv is a list of Time/Value delta pairs for this signal.
+tv = signal.tv
+assert(tv[0] == (0, 'x'))
+assert(tv[1] == (2, '0'))
+assert(tv[2] == (6, '1'))
+
+# Random access value of the signal at a given time.
+# Note how it works for times between deltas as well.
+assert(signal[0] == 'x')
+assert(signal[1] == 'x')
+assert(signal[2] == '0')
+assert(signal[3] == '0')
+....
+
+But you can also use this library in a purely stream callback fashion as shown in the examples by doing something like:
+
+....
+class MyStreamParserCallbacks(vcdvcd.StreamParserCallbacks):
+    def value(
+        self,
+        vcd,
+        time,
+        value,
+        identifier_code,
+        cur_sig_vals,
+    ):
+        print('{} {} {}'.format(time, value, identifier_code))
+vcd = VCDVCD('counter_tb.vcd', callbacks=MyStreamParserCallbacks(), store_tvs=False)
+....
+
+`store_tvs=False` instructs the library to not store all the signal value change data,  which would likely just take up useless space in your streaming application. Only signal metadata is stored in that case.
+
+== About this repository
+
+The VCD format is defined by the Verilog standard, and can be generated with `$dumpvars`.
+
+This repo was originally forked from Sameer Gauria's version, which is currently only hosted on PyPI with email patches and no public bug tracking: https://pypi.python.org/pypi/Verilog_VCD[].
+
+There is also a read-only mirror at: https://github.com/zylin/Verilog_VCD[].
+
+The initial purpose of this fork was <<vcdcat>>, but other features ended up being added (basically because by people are now able to conveniently communicate with the project on GitHub), e.g. convenient random access as mentioned at <<api-usage>> and basic tests at link:test.py[].
+
+Another stream implementation can be found at: https://github.com/GordonMcGregor/vcd_parser[].
+
+== Release procedure
+
+Ensure that basic tests don't blow up:
+
+....
+./examples.py
+./test.py
+./vcdcat counter_tb.vcd
+./vcdcat -d counter_tb.vcd
+....
+
+Update the `version` field in `setup.py`:
+
+....
+vim setup.py
+....
+
+Create a tag and push it:
+
+....
+v=v2.0.2
+git add setup.py
+git commit -m $v
+git tag -a $v -m $v
+git push --follow-tags
+....
+
+Push to PyPi:
+
+....
+python -m pip install --user setuptools wheel twine
+python setup.py sdist bdist_wheel
+twine upload dist/*
+rm -rf build dist *.egg-info
+....

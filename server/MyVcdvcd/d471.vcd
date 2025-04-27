@@ -1,0 +1,49 @@
+$date
+   Sun Apr  7 10:00:47 2024
+$end
+$version
+  2017.2
+$end
+$timescale
+  1ps
+$end
+$scope module tb $end
+$var reg 1 ! CLK $end
+$var reg 1 " RST $end
+$var wire 8 # LED [7:0] $end
+$var integer 32 $ Dout_File $end
+$var reg 10 % cnt [9:0] $end
+$var reg 10 & cnt_1 [9:0] $end
+$var parameter 32 ' PERIOD [31:0] $end
+$scope module u0 $end
+$var wire 1 ( clk $end
+$var wire 1 ) rst_n $end
+$var wire 8 # led [7:0] $end
+$var reg 24 * cnt_reg [23:0] $end
+$var reg 8 + light_reg [7:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0!
+0"
+bx #
+b0 $
+b0 %
+b0 &
+b1011 '
+0(
+0)
+bx *
+bx +
+$end
+#5000
+1!
+b1 #
+1(
+b1 *
+b0 +
+#10000
+0!
+0(
